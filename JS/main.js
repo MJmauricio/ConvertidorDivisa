@@ -56,8 +56,8 @@ if (darkMode === "activado") {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                historial = []; // Vaciar el historial
-                mostrarHistorial(); // Actualizar la vista
+                historial = []; 
+                mostrarHistorial(); 
                 Swal.fire(
                     '¡Borrado!',
                     'El historial ha sido eliminado.',
