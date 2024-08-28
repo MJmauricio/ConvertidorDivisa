@@ -1,7 +1,18 @@
 document.getElementById('cotizador').addEventListener('click', convertir);
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        convertir();
+    }
+});
+
 let toggle = document.getElementById("toggle");
 let label_toggle = document.getElementById("label_toggle");
+let historial = [];
+
+
+
 
 function activarDarkMode() {
     document.body.classList.add("dark-mode");
@@ -20,7 +31,7 @@ let darkMode = localStorage.getItem("dark-mode");
 
 if (darkMode === "activado") {
     activarDarkMode();
-    toggle.checked = true; // Asegúrate de que el toggle esté en la posición correcta
+    toggle.checked = true;
 } else {
     desactivarDarkMode();
 }
@@ -33,15 +44,40 @@ if (darkMode === "activado") {
         }
     });
 
+    document.getElementById('borrarHistorialBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, borrar historial',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                historial = []; // Vaciar el historial
+                mostrarHistorial(); // Actualizar la vista
+                Swal.fire(
+                    '¡Borrado!',
+                    'El historial ha sido eliminado.',
+                    'success'                   
+                );
+            }
+        });
+    });
+
+    
+
 function convertir() {
     const divisas = [
-        { nombre: "Dólar", tasa: 1100 },
-        { nombre: "Euro", tasa: 1300 },
-        { nombre: "Franco suizo", tasa: 1000 },
-        { nombre: "Libra Esterlina", tasa: 323 },
-        { nombre: "Yen Japonés", tasa: 564 },
-        { nombre: "Dólar Australiano", tasa: 465 },
-        { nombre: "Dólar Canadiense", tasa: 649 }
+        { nombre: "Dólar", tasa: 930 },
+        { nombre: "Euro", tasa: 1054 },
+        { nombre: "Franco suizo", tasa: 1125 },
+        { nombre: "Libra Esterlina", tasa: 1251 },
+        { nombre: "Yen Japonés", tasa: 7 },
+        { nombre: "Dólar Australiano", tasa: 644 },
+        { nombre: "Dólar Canadiense", tasa: 703  }
     ];
 
     const nombresAbreviados = ["USD", "EUR", "CHF", "GBP", "JPY", "AUD", "CAD"];
@@ -53,7 +89,6 @@ function convertir() {
         return;
     }
 
-    // Obtener la moneda seleccionada
     const divisaSeleccionada = document.getElementById("moneda").value;
 
     const divisaIndex = nombresAbreviados.indexOf(divisaSeleccionada);
@@ -64,7 +99,30 @@ function convertir() {
 
     const resultado = calcular(monto, divisas[divisaIndex]);
 
+    let resultadoFormateado = resultado.toLocaleString('es-ES');
+    
+    
+    
+    
+
     document.getElementById("resultado").innerText = `El resultado de tu conversión es: ${resultado} ${nombresAbreviados[divisaIndex]}`;
+    historial.unshift({ monto: monto.toLocaleString('es-ES'), resultado: resultadoFormateado, divisa: nombresAbreviados[divisaIndex] });
+    if (historial.length > 10) {
+        historial.pop();}
+
+        mostrarHistorial();
+}
+
+function mostrarHistorial() {
+    let historialDiv = document.getElementById('historial');
+    historialDiv.innerHTML = '<h3>Historial de Conversiones:</h3>';
+
+    historial.forEach((item, index) => {
+        historialDiv.innerHTML += `<p>${index + 1}. ${"$"+item.monto} pesos son ${"$"+item.resultado} ${item.divisa}</p>`;
+    });
+
 
     document.getElementById("conversion-form").reset();
 }
+
+    
