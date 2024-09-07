@@ -76,6 +76,14 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
+.btn{
+    color: white;
+    background: darkgoldenrod;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
 body {
     display: flex;
     flex-direction: column;
